@@ -65,14 +65,14 @@ global-trade-compliance-ai/
 
 
 
+## 🚀  Getting Started: Setup and Deployment 
 
 
-
-### 🚀 Getting Started: Setup and Deployment
+##  🚀 Getting Started: Setup and Deployment
 
 This section provides a step-by-step guide to set up the project locally and deploy it to production.
 
-#### Prerequisites
+### Prerequisites
 
 - Python 3.9+ installed on your system.
 - Node.js v18+ and npm installed.
