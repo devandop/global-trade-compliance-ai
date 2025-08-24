@@ -1,4 +1,5 @@
-# 🌍 Global Trade & Compliance AI Assistant🌍 Global Trade & Compliance AI Assistant
+
+# 🌍 Global Trade & Compliance AI Assistant
 Welcome to the Global Trade & Compliance AI Assistant, a powerful, intelligent application designed to simplify the complexities of international trade. This tool leverages a sophisticated AI agent, orchestrated by Portia AI, to provide real-time compliance checks, automate financial transactions via Xero, and integrate seamlessly into your business workflows with Slack.
 ## 🎯 The Pain Point
 Global trade is a minefield of complex, ever-changing regulations. Businesses, especially small to medium-sized enterprises, face significant challenges:
