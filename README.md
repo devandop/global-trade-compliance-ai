@@ -12,12 +12,12 @@ This AI assistant was built to solve these problems by providing a single, intel
 - **Conversational AI Interface:** Interact with the assistant using natural language through a clean, web-based chat UI.
 - **Dynamic AI Planning:** Powered by Portia AI, the assistant can understand complex user requests and dynamically generate multi-step plans to achieve them.
 - **Compliance Checks:**
-HS Code Lookup: Instantly find Harmonized System codes for products.
-Sanctions Screening: (Conceptual) Vet entities against global watchlists.
+  - HS Code Lookup: Instantly find Harmonized System codes for products.
+  - Sanctions Screening: (Conceptual) Vet entities against global watchlists.
 - **Seamless Xero Integration:**
-Connects securely to your Xero account.
-Fetches real-time data like tax rates for accurate duty calculations.
-Creates invoices and other transactions directly in Xero.
+- Connects securely to your Xero account.
+- Fetches real-time data like tax rates for accurate duty calculations.
+- Creates invoices and other transactions directly in Xero.
 - **Slack for Approvals:** For high-value or sensitive operations, the assistant can send approval requests to a designated Slack channel, pausing its workflow until human approval is received.
 - **Secure and Scalable:** Built with a production-ready architecture, including secure user authentication, persistent state management, and designed for cloud deployment.
 ## 🛠️ Technology Stack
