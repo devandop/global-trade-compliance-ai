@@ -19,7 +19,7 @@ Fetches real-time data like tax rates for accurate duty calculations.
 Creates invoices and other transactions directly in Xero.
 -**Slack for Approvals:** For high-value or sensitive operations, the assistant can send approval requests to a designated Slack channel, pausing its workflow until human approval is received.
 -**Secure and Scalable:** Built with a production-ready architecture, including secure user authentication, persistent state management, and designed for cloud deployment.
-🛠️ Technology Stack
+### 🛠️ Technology Stack
 This project uses a modern, robust technology stack to deliver a seamless and powerful user experience.
 Component	Technology	Purpose
 Frontend	
@@ -119,4 +119,4 @@ Deploy to Streamlit Cloud (Frontend):
 Create a new app in Streamlit Cloud and connect it to the same GitHub repository.
 Set the main file path to frontend/app.py.
 In the "Secrets" section, add the BACKEND_URL pointing to your deployed Render backend's public URL.
-Note on AI Assistance: This project, including its architecture, code, and documentation, was developed with significant assistance from Google's Gemini (an LLM). It serves as a powerful example of human-AI collaboration in building complex, modern software applications.
+**Note on AI Assistance:** This project, including its architecture, code, and documentation, was developed with significant assistance from Google's Gemini (an LLM). It serves as a powerful example of human-AI collaboration in building complex, modern software applications.
