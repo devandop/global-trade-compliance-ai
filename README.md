@@ -89,8 +89,10 @@ Follow these steps to get the application running on your local Ubuntu WSL envir
     # Navigate to where you want to store the project
     # For example, your home directory:
     cd ~ 
+    ```
     
     # Clone your project from GitHub
+    ```
     git clone <your_github_repository_url>
     cd global-trade-compliance-ai
     ```
