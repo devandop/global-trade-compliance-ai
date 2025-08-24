@@ -20,7 +20,7 @@ This AI assistant was built to solve these problems by providing a single, intel
     - Creates invoices and other transactions directly in Xero.
 - **Slack for Approvals:** For high-value or sensitive operations, the assistant can send approval requests to a designated Slack channel, pausing its workflow until human approval is received.
 - **Secure and Scalable:** Built with a production-ready architecture, including secure user authentication, persistent state management, and designed for cloud deployment.
-### 🛠️ Technology Stack
+## 🛠️ Technology Stack
 
 This project uses a modern, robust technology stack to deliver a seamless and powerful user experience.
 
@@ -36,10 +36,12 @@ This project uses a modern, robust technology stack to deliver a seamless and po
 | **Workflow Integration**   | ![Slack](https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white)              | For sending notifications and handling out-of-band human approval steps.               |
 | **Containerization**       | ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?&style=for-the-badge&logo=docker&logoColor=white)   | For packaging the backend application and its dependencies for consistent deployment.  |
 | **Deployment**             | ![Render](https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)           | A cloud platform for deploying the backend, database, and Redis services.              |
+
 ## 📂 Project Directory Structure
+
 The project is organized into distinct components for a clean separation of concerns.
-code
-Code
+
+```bash
 global-trade-compliance-ai/
 ├── backend/                  # FastAPI application, database models, and auth logic
 │   ├── main.py
