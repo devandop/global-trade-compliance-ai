@@ -20,39 +20,22 @@ This AI assistant was built to solve these problems by providing a single, intel
     - Creates invoices and other transactions directly in Xero.
 - **Slack for Approvals:** For high-value or sensitive operations, the assistant can send approval requests to a designated Slack channel, pausing its workflow until human approval is received.
 - **Secure and Scalable:** Built with a production-ready architecture, including secure user authentication, persistent state management, and designed for cloud deployment.
-## 🛠️ Technology Stack
+### 🛠️ Technology Stack
+
 This project uses a modern, robust technology stack to deliver a seamless and powerful user experience.
-Component	Technology	Purpose
-Frontend	
-![alt text](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)
-For building the interactive web-based chat user interface.
-Backend API	
-![alt text](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
-A high-performance Python framework for building the secure and robust API server.
-AI Agent Orchestration	
-![alt text](https://img.shields.io/badge/Portia_AI-8A2BE2?style=for-the-badge)
-The core platform for orchestrating tools, managing plans, and handling auth flows.
-Large Language Model	
-![alt text](https://img.shields.io/badge/Google_Gemini-8E75B9?style=for-the-badge&logo=google&logoColor=white)
-Provides the natural language understanding and reasoning capabilities for the agent.
-Database	
-![alt text](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
-For persistent storage of user accounts and application data.
-Cache & State Store	
-![alt text](https://img.shields.io/badge/redis-%23DD0031.svg?&style=for-the-badge&logo=redis&logoColor=white)
-For managing application state, chat history, and idempotency keys.
-Financial Integration	
-![alt text](https://img.shields.io/badge/Xero-13B5EA?style=for-the-badge&logo=xero&logoColor=white)
-Connected via Portia's Local MCP for real-time accounting data and transaction creation.
-Workflow Integration	
-![alt text](https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white)
-For sending notifications and handling out-of-band human approval steps.
-Containerization	
-![alt text](https://img.shields.io/badge/docker-%230db7ed.svg?&style=for-the-badge&logo=docker&logoColor=white)
-For packaging the backend application and its dependencies for consistent deployment.
-Deployment	
-![alt text](https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)
-A cloud platform for deploying the backend, database, and Redis services.
+
+| Component                  | Technology                                                                                                    | Purpose                                                                                |
+| :------------------------- | :------------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------- |
+| **Frontend**               | ![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white) | For building the interactive web-based chat user interface.                            |
+| **Backend API**            | ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)                        | A high-performance Python framework for building the secure and robust API server.     |
+| **AI Agent Orchestration** | ![Portia AI](https://img.shields.io/badge/Portia_AI-8A2BE2?style=for-the-badge)                               | The core platform for orchestrating tools, managing plans, and handling auth flows.    |
+| **Large Language Model**   | ![Google Gemini](https://img.shields.io/badge/Google_Gemini-8E75B9?style=for-the-badge&logo=google&logoColor=white) | Provides the natural language understanding and reasoning capabilities for the agent.   |
+| **Database**               | ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white) | For persistent storage of user accounts and application data.                          |
+| **Cache & State Store**    | ![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?&style=for-the-badge&logo=redis&logoColor=white)      | For managing application state, chat history, and idempotency keys.                    |
+| **Financial Integration**  | ![Xero](https://img.shields.io/badge/Xero-13B5EA?style=for-the-badge&logo=xero&logoColor=white)                 | Connected via Portia's Local MCP for real-time accounting data and transaction creation. |
+| **Workflow Integration**   | ![Slack](https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white)              | For sending notifications and handling out-of-band human approval steps.               |
+| **Containerization**       | ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?&style=for-the-badge&logo=docker&logoColor=white)   | For packaging the backend application and its dependencies for consistent deployment.  |
+| **Deployment**             | ![Render](https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)           | A cloud platform for deploying the backend, database, and Redis services.              |
 ## 📂 Project Directory Structure
 The project is organized into distinct components for a clean separation of concerns.
 code
