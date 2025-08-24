@@ -52,7 +52,7 @@ For packaging the backend application and its dependencies for consistent deploy
 Deployment	
 ![alt text](https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)
 A cloud platform for deploying the backend, database, and Redis services.
-📂 Project Directory Structure
+## 📂 Project Directory Structure
 The project is organized into distinct components for a clean separation of concerns.
 code
 Code
@@ -76,7 +76,7 @@ global-trade-compliance-ai/
 ├── .gitignore                # Specifies files and folders for Git to ignore
 ├── render.yaml               # Render Blueprint for Infrastructure as Code
 └── README.md                 # This file
-🚀 Getting Started: Setup and Deployment
+## 🚀 Getting Started: Setup and Deployment
 Prerequisites
 Python 3.9+
 Node.js v18+ & npm
@@ -119,4 +119,5 @@ Deploy to Streamlit Cloud (Frontend):
 Create a new app in Streamlit Cloud and connect it to the same GitHub repository.
 Set the main file path to frontend/app.py.
 In the "Secrets" section, add the BACKEND_URL pointing to your deployed Render backend's public URL.
-**Note on AI Assistance:** This project, including its architecture, code, and documentation, was developed with significant assistance from Google's Gemini (an LLM). It serves as a powerful example of human-AI collaboration in building complex, modern software applications.
+## **Note on AI Assistance:**
+ This project, including its architecture, code, and documentation, was developed with significant assistance from Google's Gemini (an LLM). It serves as a powerful example of human-AI collaboration in building complex, modern software applications.
