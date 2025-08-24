@@ -20,7 +20,7 @@ This AI assistant was built to solve these problems by providing a single, intel
     - Creates invoices and other transactions directly in Xero.
 - **Slack for Approvals:** For high-value or sensitive operations, the assistant can send approval requests to a designated Slack channel, pausing its workflow until human approval is received.
 - **Secure and Scalable:** Built with a production-ready architecture, including secure user authentication, persistent state management, and designed for cloud deployment.
-## 🛠️ Technology Stack
+### 🛠️ Technology Stack
 
 This project uses a modern, robust technology stack to deliver a seamless and powerful user experience.
 
@@ -37,7 +37,7 @@ This project uses a modern, robust technology stack to deliver a seamless and po
 | **Containerization**       | ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?&style=for-the-badge&logo=docker&logoColor=white)   | For packaging the backend application and its dependencies for consistent deployment.  |
 | **Deployment**             | ![Render](https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)           | A cloud platform for deploying the backend, database, and Redis services.              |
 
-## 📂 Project Directory Structure
+### 📂 Project Directory Structure
 
 The project is organized into distinct components for a clean separation of concerns.
 
@@ -65,100 +65,3 @@ global-trade-compliance-ai/
 
 
 
-## 🚀  Getting Started: Setup and Deployment 
-
-This section provides a step-by-step guide to set up the project locally and deploy it to production.
-
-### Prerequisites
-
-  - Python 3.9+ installed on your system.
-  - Node.js v18+ and npm installed.
-  - Docker installed and running.
-  - Git installed.
-  - An account on [Render](https://render.com/).
-  - An account on [Streamlit Cloud](https://share.streamlit.io/).
-  - API Keys from: Google, Portia AI, Xero (Custom Connection), and Tavily.
-
-#### Local Development Setup
-
-Follow these steps to get the application running on your local Ubuntu WSL environment.
-
-    1.  **Clone the repository:**
-    ```bash
-    # Navigate to where you want to store the project
-    # For example, your home directory:
-    cd ~ 
-    
-    # Clone your project from GitHub
-    git clone <your_github_repository_url>
-    cd global-trade-compliance-ai
-    ```
-
-    2.  **Create and configure your secrets file:**
-    *   Copy the template: `cp backend/.env.example backend/.env`
-    *   Edit `backend/.env` and fill in all your acquired API keys and local database URL (e.g., `redis://localhost:6379`, `postgresql://...`).
-
-    3.  **Make scripts executable and run setup:**
-    This will create a Python virtual environment and install all necessary dependencies.
-    ```bash
-    chmod +x setup.sh
-    ./setup.sh
-    ```
-    *(Ensure `setup.sh` completed without errors.)*
-
-    4.  **Activate the virtual environment and run the application:**
-    ```bash
-    source venv/bin/activate
-    chmod +x run_dev.sh
-    ./run_dev.sh
-    ```
-    After running this, the FastAPI backend should be available at `http://localhost:8000`, and the Streamlit frontend at `http://localhost:8501`. Your terminal will be occupied by these running processes.
-
-#### Production Deployment
-
-This application is designed for a robust deployment on Render (for backend, database, Redis) and Streamlit Cloud (for frontend).
-
-    1.  **Push Code to GitHub:**
-    Commit all project files (except `.env` and `backend/.env`) to a private GitHub repository. Make sure `.gitignore` is correctly set up.
-
-    2.  **Deploy Data Services and Backend to Render:**
-    *   **Create PostgreSQL Instance:** In Render dashboard -> New -> PostgreSQL. Name it (e.g., `compliance-db`). Copy its **Internal Connection String**.
-    *   **Create Redis Instance:** In Render dashboard -> New -> Redis. Name it (e.g., `compliance-redis`). Copy its **Internal Connection URL**.
-    *   **Create Backend Web Service:**
-           *   New -> Web Service. Connect your GitHub repository.
-           *   **Runtime:** `Docker`.
-           *   **Dockerfile Path:** `./deployment/Dockerfile`.
-           *   **Environment Variables (Secrets):** Add all necessary secrets from your local `backend/.env` file (e.g., `PORTIA_API_KEY`, `GOOGLE_API_KEY`, `XERO_CLIENT_ID`, `XERO_CLIENT_SECRET`, `REDIS_URL`, `DATABASE_URL`, `SECRET_KEY`, `TAVILY_API_KEY`). Crucially, use the **Internal Connection String** for `DATABASE_URL` and the **Internal Connection URL** for `REDIS_URL`.
-           *   Add `FRONTEND_URL` as an environment variable pointing to your future Streamlit Cloud URL (you'll update this after deploying the frontend).
-           *   Deploy the backend. Once live, copy its public URL.
-
-    3.  **Deploy Frontend to Streamlit Cloud:**
-          *   Log in to [Streamlit Cloud](https://share.streamlit.io/).
-          *   Click "New app".
-          *   Select your GitHub repository.
-          *   **Main file path:** `frontend/app.py`.
-           *        **App URL:** Choose a URL (e.g., `your-app-name`).
-          *   **Secrets:** Go to "Advanced settings..." -> "Secrets". Add the `BACKEND_URL` secret, pointing to your deployed Render backend's public URL.
-    *   Deploy the Streamlit app.
-
-    4.  **Update Render Backend with Frontend URL:**
-      *   Go back to your Render dashboard, find your backend service (`compliance-ai-backend`).
-      *   Navigate to its "Environment" settings.
-      *   Edit the `FRONTEND_URL` environment variable and paste the public URL of your deployed Streamlit Cloud app.
-      *   Save changes, and Render will redeploy the backend with this updated URL.
-
-
-
-
-
-**Note:**
-*   Ensure you have correctly set up your Xero Custom Connection and obtained `XERO_CLIENT_ID`/`XERO_CLIENT_SECRET`.
-*   Ensure your Portia AI dashboard is configured with your `PORTIA_API_KEY` and `TAVILY_API_KEY`.
-*   The `run_dev.sh` script is for local development only. Render handles the start commands based on the `Dockerfile` and `render.yaml`.
-
----
-
-
-
-## **Note on AI Assistance:**
- This project, including its architecture, code, and documentation, was developed with significant assistance from Google's Gemini (an LLM). It serves as a powerful example of human-AI collaboration in building complex, modern software applications.
