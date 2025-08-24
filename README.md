@@ -20,7 +20,7 @@ Fetches real-time data like tax rates for accurate duty calculations.
 Creates invoices and other transactions directly in Xero.
 - **Slack for Approvals:** For high-value or sensitive operations, the assistant can send approval requests to a designated Slack channel, pausing its workflow until human approval is received.
 - **Secure and Scalable:** Built with a production-ready architecture, including secure user authentication, persistent state management, and designed for cloud deployment.
-##🛠️ Technology Stack
+## 🛠️ Technology Stack
 This project uses a modern, robust technology stack to deliver a seamless and powerful user experience.
 Component	Technology	Purpose
 Frontend	
