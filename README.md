@@ -64,39 +64,53 @@ global-trade-compliance-ai/
 └── README.md                 # This file
 
 
-## 🚀 Getting Started: Setup and Deployment
+---
+
+### 🚀 Getting Started: Setup and Deployment
 
 This section provides a step-by-step guide to set up the project locally and deploy it to production.
 
-### Prerequisites
-- Python 3.9+ installed on your system.
-- Node.js v18+ and npm installed.
-- Docker installed and running.
-- Git installed.
-- An account on Render.
-- An account on Streamlit Cloud.
-- API Keys from: Google, Portia AI, Xero (Custom Connection), and Tavily.
+#### Prerequisites
 
-### Local Development Setup
+Before you begin, ensure you have the following software and accounts:
+- **Python 3.9+** installed on your system.
+- **Node.js v18+ and npm** installed (required for the Xero MCP Server).
+- **Docker** installed and running.
+- **Git** installed.
+- An account on [Render](https://render.com/).
+- An account on [Streamlit Cloud](https://share.streamlit.io/).
+- **API Keys** from:
+    - Google (for Gemini LLM)
+    - Portia AI
+    - Xero (create a Custom Connection App)
+    - Tavily
 
-Follow these steps to get the application running on your local machine.
+#### Local Development Setup
+
+Follow these steps to get the application running on your local Ubuntu WSL environment.
 
 1.  **Clone the repository:**
     ```bash
-    git clone <your_repo_url>
+    # Navigate to where you want to store the project
+    # For example, your home directory:
+    cd ~ 
+    
+    # Clone your project from GitHub
+    git clone <your_github_repository_url>
     cd global-trade-compliance-ai
     ```
 
 2.  **Create and configure your secrets file:**
-    *   Copy the template: `cp backend/.env.example backend/.env`
-    *   Edit `backend/.env` and fill in all your acquired API keys and local database URL (e.g., `redis://localhost:6379`, `postgresql://...`).
+    *   Copy the template for backend secrets: `cp backend/.env.example backend/.env`
+    *   Edit `backend/.env` and fill in all your acquired API keys (`PORTIA_API_KEY`, `GOOGLE_API_KEY`, `XERO_CLIENT_ID`, `XERO_CLIENT_SECRET`, `TAVILY_API_KEY`) and your local database connection string (`REDIS_URL`, `DATABASE_URL`). You'll also need your `SECRET_KEY` for JWT.
 
 3.  **Make scripts executable and run setup:**
-    This will create a Python virtual environment and install all necessary dependencies.
+    This crucial step creates the Python virtual environment and installs all project dependencies.
     ```bash
     chmod +x setup.sh
     ./setup.sh
     ```
+    *(Ensure `setup.sh` completed without errors.)*
 
 4.  **Activate the virtual environment and run the application:**
     ```bash
@@ -104,46 +118,51 @@ Follow these steps to get the application running on your local machine.
     chmod +x run_dev.sh
     ./run_dev.sh
     ```
-    After running this, the FastAPI backend will be available at `http://localhost:8000`, and the Streamlit frontend at `http://localhost:8501`.
+    After this, the FastAPI backend should be running at `http://localhost:8000`, and the Streamlit frontend at `http://localhost:8501`. Your terminal will be occupied by these running processes.
 
-### Production Deployment
+#### **Production Deployment**
 
-This application is designed for a robust deployment on Render and Streamlit Cloud.
+This application is designed for a robust deployment on Render (for backend, database, Redis) and Streamlit Cloud (for frontend).
 
-1.  **Push to GitHub:**
-    Commit all project files (except `.env`) to a private GitHub repository. Make sure `backend/.env.example` is committed, but `backend/.env` is ignored by Git.
+1.  **Push Code to GitHub:**
+    Commit all your project files (especially the correct `backend/requirements.txt`, `frontend/requirements.txt`, `portia-agent/`, `backend/main.py`, `frontend/app.py`, and `deployment/Dockerfile`) to a **private** GitHub repository. Make sure your `.gitignore` file is correctly configured to exclude `.env` files.
 
 2.  **Deploy Data Services and Backend to Render:**
-    *   **Create PostgreSQL Instance:** In Render dashboard -> New -> PostgreSQL. Name it (e.g., `compliance-db`). Copy its **Internal Connection String**.
+    *   **Create PostgreSQL Instance:** In your Render dashboard -> New -> PostgreSQL. Name it (e.g., `compliance-db`). Copy its **Internal Connection String**.
     *   **Create Redis Instance:** In Render dashboard -> New -> Redis. Name it (e.g., `compliance-redis`). Copy its **Internal Connection URL**.
     *   **Create Backend Web Service:**
-        *   New -> Web Service. Connect your GitHub repo.
-        *   **Runtime:** `Docker`.
-        *   **Dockerfile Path:** `./deployment/Dockerfile`.
-        *   **Environment Variables (Secrets):** Add all necessary secrets from your local `backend/.env` file (e.g., `PORTIA_API_KEY`, `GOOGLE_API_KEY`, `XERO_CLIENT_ID`, `XERO_CLIENT_SECRET`, `REDIS_URL`, `DATABASE_URL`, `SECRET_KEY`, `TAVILY_API_KEY`). Crucially, use the **Internal Connection String** for `DATABASE_URL` and the **Internal Connection URL** for `REDIS_URL`.
-        *   Add `FRONTEND_URL` as an environment variable, pointing to your future Streamlit Cloud URL (you'll update this after deploying the frontend).
-        *   Deploy the backend. Once live, copy its public URL.
+        *   New -> Web Service. Connect your GitHub repository.
+        *   **Runtime:** Select `Docker`.
+        *   **Dockerfile Path:** `./deployment/Dockerfile` (this tells Render to use your Dockerfile to build the image).
+        *   **Environment Variables (Secrets):** Add all the necessary secrets here.
+            *   `PORTIA_API_KEY`, `GOOGLE_API_KEY`, `XERO_CLIENT_ID`, `XERO_CLIENT_SECRET`, `TAVILY_API_KEY`, `SECRET_KEY` (from your local `.env` file).
+            *   `DATABASE_URL`: Paste the Internal Connection String from your Render PostgreSQL instance.
+            *   `REDIS_URL`: Paste the Internal Connection URL from your Render Redis instance.
+            *   `FRONTEND_URL`: This is important. You will get this URL after deploying the Streamlit frontend. For now, you can use a placeholder or `http://localhost:8501` (it will be updated later).
+        *   Deploy the backend service. Once it's live, **copy its public URL** (e.g., `https://compliance-ai-backend.onrender.com`).
 
 3.  **Deploy Frontend to Streamlit Cloud:**
     *   Log in to [Streamlit Cloud](https://share.streamlit.io/).
     *   Click "New app".
     *   Select your GitHub repository.
     *   **Main file path:** `frontend/app.py`.
-    *   **App URL:** Choose a URL (e.g., `your-app-name`).
-    *   **Secrets:** Go to "Advanced settings..." -> "Secrets". Add:
+    *   **App URL:** Choose a unique URL (e.g., `your-app-name`).
+    *   **Advanced settings... -> Secrets:** Add the following secret:
         ```
         BACKEND_URL = "YOUR_RENDER_BACKEND_PUBLIC_URL"
         ```
-        (Paste the public URL of your deployed backend service here).
+        (Replace `YOUR_RENDER_BACKEND_PUBLIC_URL` with the actual public URL you copied from your Render backend service).
     *   Deploy the Streamlit app.
 
 4.  **Update Render Backend with Frontend URL:**
     *   Go back to your Render dashboard, find your backend service (`compliance-ai-backend`).
-    *   Go to its "Environment" settings.
-    *   Edit the `FRONTEND_URL` environment variable and paste the public URL of your deployed Streamlit app.
-    *   Save changes, and Render will redeploy the backend with the correct frontend URL.
+    *   Navigate to its **Environment** settings.
+    *   Edit the `FRONTEND_URL` environment variable and paste the public URL of your deployed Streamlit Cloud app.
+    *   Save changes. Render will redeploy the backend with this updated URL.
 
 ---
+
+This structure provides a clean separation between your project's codebase and its deployment instructions, making it clear what needs to be done at each stage.
 
 **Note:**
 *   Ensure you have correctly set up your Xero Custom Connection and obtained `XERO_CLIENT_ID`/`XERO_CLIENT_SECRET`.
