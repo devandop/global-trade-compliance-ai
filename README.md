@@ -14,7 +14,7 @@ This AI assistant was built to solve these problems by providing a single, intel
 - **Compliance Checks:**
 HS Code Lookup: Instantly find Harmonized System codes for products.
 Sanctions Screening: (Conceptual) Vet entities against global watchlists.
--**Seamless Xero Integration:**
+- **Seamless Xero Integration:**
 Connects securely to your Xero account.
 Fetches real-time data like tax rates for accurate duty calculations.
 Creates invoices and other transactions directly in Xero.
