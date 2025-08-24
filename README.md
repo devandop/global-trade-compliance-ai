@@ -67,26 +67,23 @@ global-trade-compliance-ai/
 
 ## 🚀  Getting Started: Setup and Deployment 
 
-
-##  🚀 Getting Started: Setup and Deployment
-
 This section provides a step-by-step guide to set up the project locally and deploy it to production.
 
 ### Prerequisites
 
-- Python 3.9+ installed on your system.
-- Node.js v18+ and npm installed.
-- Docker installed and running.
-- Git installed.
-- An account on [Render](https://render.com/).
-- An account on [Streamlit Cloud](https://share.streamlit.io/).
-- API Keys from: Google, Portia AI, Xero (Custom Connection), and Tavily.
+  - Python 3.9+ installed on your system.
+  - Node.js v18+ and npm installed.
+  - Docker installed and running.
+  - Git installed.
+  - An account on [Render](https://render.com/).
+  - An account on [Streamlit Cloud](https://share.streamlit.io/).
+  - API Keys from: Google, Portia AI, Xero (Custom Connection), and Tavily.
 
 #### Local Development Setup
 
 Follow these steps to get the application running on your local Ubuntu WSL environment.
 
-1.  **Clone the repository:**
+    1.  **Clone the repository:**
     ```bash
     # Navigate to where you want to store the project
     # For example, your home directory:
@@ -97,11 +94,11 @@ Follow these steps to get the application running on your local Ubuntu WSL envir
     cd global-trade-compliance-ai
     ```
 
-2.  **Create and configure your secrets file:**
+    2.  **Create and configure your secrets file:**
     *   Copy the template: `cp backend/.env.example backend/.env`
     *   Edit `backend/.env` and fill in all your acquired API keys and local database URL (e.g., `redis://localhost:6379`, `postgresql://...`).
 
-3.  **Make scripts executable and run setup:**
+    3.  **Make scripts executable and run setup:**
     This will create a Python virtual environment and install all necessary dependencies.
     ```bash
     chmod +x setup.sh
@@ -109,7 +106,7 @@ Follow these steps to get the application running on your local Ubuntu WSL envir
     ```
     *(Ensure `setup.sh` completed without errors.)*
 
-4.  **Activate the virtual environment and run the application:**
+    4.  **Activate the virtual environment and run the application:**
     ```bash
     source venv/bin/activate
     chmod +x run_dev.sh
@@ -121,34 +118,34 @@ Follow these steps to get the application running on your local Ubuntu WSL envir
 
 This application is designed for a robust deployment on Render (for backend, database, Redis) and Streamlit Cloud (for frontend).
 
-1.  **Push Code to GitHub:**
+    1.  **Push Code to GitHub:**
     Commit all project files (except `.env` and `backend/.env`) to a private GitHub repository. Make sure `.gitignore` is correctly set up.
 
-2.  **Deploy Data Services and Backend to Render:**
+    2.  **Deploy Data Services and Backend to Render:**
     *   **Create PostgreSQL Instance:** In Render dashboard -> New -> PostgreSQL. Name it (e.g., `compliance-db`). Copy its **Internal Connection String**.
     *   **Create Redis Instance:** In Render dashboard -> New -> Redis. Name it (e.g., `compliance-redis`). Copy its **Internal Connection URL**.
     *   **Create Backend Web Service:**
-        *   New -> Web Service. Connect your GitHub repository.
-        *   **Runtime:** `Docker`.
-        *   **Dockerfile Path:** `./deployment/Dockerfile`.
-        *   **Environment Variables (Secrets):** Add all necessary secrets from your local `backend/.env` file (e.g., `PORTIA_API_KEY`, `GOOGLE_API_KEY`, `XERO_CLIENT_ID`, `XERO_CLIENT_SECRET`, `REDIS_URL`, `DATABASE_URL`, `SECRET_KEY`, `TAVILY_API_KEY`). Crucially, use the **Internal Connection String** for `DATABASE_URL` and the **Internal Connection URL** for `REDIS_URL`.
-        *   Add `FRONTEND_URL` as an environment variable pointing to your future Streamlit Cloud URL (you'll update this after deploying the frontend).
-        *   Deploy the backend. Once live, copy its public URL.
+           *   New -> Web Service. Connect your GitHub repository.
+           *   **Runtime:** `Docker`.
+           *   **Dockerfile Path:** `./deployment/Dockerfile`.
+           *   **Environment Variables (Secrets):** Add all necessary secrets from your local `backend/.env` file (e.g., `PORTIA_API_KEY`, `GOOGLE_API_KEY`, `XERO_CLIENT_ID`, `XERO_CLIENT_SECRET`, `REDIS_URL`, `DATABASE_URL`, `SECRET_KEY`, `TAVILY_API_KEY`). Crucially, use the **Internal Connection String** for `DATABASE_URL` and the **Internal Connection URL** for `REDIS_URL`.
+           *   Add `FRONTEND_URL` as an environment variable pointing to your future Streamlit Cloud URL (you'll update this after deploying the frontend).
+           *   Deploy the backend. Once live, copy its public URL.
 
-3.  **Deploy Frontend to Streamlit Cloud:**
-    *   Log in to [Streamlit Cloud](https://share.streamlit.io/).
-    *   Click "New app".
-    *   Select your GitHub repository.
-    *   **Main file path:** `frontend/app.py`.
-    *   **App URL:** Choose a URL (e.g., `your-app-name`).
-    *   **Secrets:** Go to "Advanced settings..." -> "Secrets". Add the `BACKEND_URL` secret, pointing to your deployed Render backend's public URL.
+    3.  **Deploy Frontend to Streamlit Cloud:**
+          *   Log in to [Streamlit Cloud](https://share.streamlit.io/).
+          *   Click "New app".
+          *   Select your GitHub repository.
+          *   **Main file path:** `frontend/app.py`.
+           *        **App URL:** Choose a URL (e.g., `your-app-name`).
+          *   **Secrets:** Go to "Advanced settings..." -> "Secrets". Add the `BACKEND_URL` secret, pointing to your deployed Render backend's public URL.
     *   Deploy the Streamlit app.
 
-4.  **Update Render Backend with Frontend URL:**
-    *   Go back to your Render dashboard, find your backend service (`compliance-ai-backend`).
-    *   Navigate to its "Environment" settings.
-    *   Edit the `FRONTEND_URL` environment variable and paste the public URL of your deployed Streamlit Cloud app.
-    *   Save changes, and Render will redeploy the backend with this updated URL.
+    4.  **Update Render Backend with Frontend URL:**
+      *   Go back to your Render dashboard, find your backend service (`compliance-ai-backend`).
+      *   Navigate to its "Environment" settings.
+      *   Edit the `FRONTEND_URL` environment variable and paste the public URL of your deployed Streamlit Cloud app.
+      *   Save changes, and Render will redeploy the backend with this updated URL.
 
 
 
