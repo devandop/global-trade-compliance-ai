@@ -161,7 +161,7 @@ This application is designed for a robust deployment on Render (for backend, dat
 
 
 
-## **Note on AI Assistance:**
+## **AI Assisted Development:**
  This project, including its architecture, code, and documentation, was developed with significant assistance from Google's Gemini (an LLM). It serves as a powerful example of human-AI collaboration in building complex, modern software applications.
 
 
