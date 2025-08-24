@@ -2,23 +2,23 @@
 Welcome to the Global Trade & Compliance AI Assistant, a powerful, intelligent application designed to simplify the complexities of international trade. This tool leverages a sophisticated AI agent, orchestrated by Portia AI, to provide real-time compliance checks, automate financial transactions via Xero, and integrate seamlessly into your business workflows with Slack.
 ## 🎯 The Pain Point
 Global trade is a minefield of complex, ever-changing regulations. Businesses, especially small to medium-sized enterprises, face significant challenges:
-Product Classification: Incorrectly identifying Harmonized System (HS) codes leads to customs delays, fines, and incorrect duty payments.
-Sanctions Screening: Manually checking customers against global sanctions lists is time-consuming and prone to human error, carrying severe legal and financial risks.
-Duty & Tax Calculation: Calculating accurate landed costs, including duties and taxes for various countries, is a complex and often manual process.
-Workflow Inefficiency: Disconnected systems for compliance, accounting (like Xero), and communication (like Slack) lead to manual data entry, delays, and a lack of a unified audit trail.
+- **Product Classification:** Incorrectly identifying Harmonized System (HS) codes leads to customs delays, fines, and incorrect duty payments.
+- **Sanctions Screening:** Manually checking customers against global sanctions lists is time-consuming and prone to human error, carrying severe legal and financial risks.
+-**Duty & Tax Calculation:** Calculating accurate landed costs, including duties and taxes for various countries, is a complex and often manual process.
+-**Workflow Inefficiency:** Disconnected systems for compliance, accounting (like Xero), and communication (like Slack) lead to manual data entry, delays, and a lack of a unified audit trail.
 This AI assistant was built to solve these problems by providing a single, intelligent, conversational interface to manage these critical compliance tasks.
 ## ✨ Features
-Conversational AI Interface: Interact with the assistant using natural language through a clean, web-based chat UI.
-Dynamic AI Planning: Powered by Portia AI, the assistant can understand complex user requests and dynamically generate multi-step plans to achieve them.
-Compliance Checks:
+-**Conversational AI Interface:** Interact with the assistant using natural language through a clean, web-based chat UI.
+-**Dynamic AI Planning:** Powered by Portia AI, the assistant can understand complex user requests and dynamically generate multi-step plans to achieve them.
+-**Compliance Checks:**
 HS Code Lookup: Instantly find Harmonized System codes for products.
 Sanctions Screening: (Conceptual) Vet entities against global watchlists.
-Seamless Xero Integration:
+-**Seamless Xero Integration:**
 Connects securely to your Xero account.
 Fetches real-time data like tax rates for accurate duty calculations.
 Creates invoices and other transactions directly in Xero.
-Slack for Approvals: For high-value or sensitive operations, the assistant can send approval requests to a designated Slack channel, pausing its workflow until human approval is received.
-Secure and Scalable: Built with a production-ready architecture, including secure user authentication, persistent state management, and designed for cloud deployment.
+-**Slack for Approvals:** For high-value or sensitive operations, the assistant can send approval requests to a designated Slack channel, pausing its workflow until human approval is received.
+-**Secure and Scalable:** Built with a production-ready architecture, including secure user authentication, persistent state management, and designed for cloud deployment.
 🛠️ Technology Stack
 This project uses a modern, robust technology stack to deliver a seamless and powerful user experience.
 Component	Technology	Purpose
