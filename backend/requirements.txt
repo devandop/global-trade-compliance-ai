@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+google-generativeai
+pydantic
+portia-sdk-python
+redis
+passlib[bcrypt]
+python-jose[cryptography]
+sqlalchemy
+psycopg2-binary
+
