@@ -55,7 +55,7 @@ COPY --from=builder /opt/venv /opt/venv
 
 # Copy the application source code.
 COPY --chown=appuser:appuser backend/ ./backend/
-COPY --chown=appuser:appuser portia-agent/ ./portia-agent/
+COPY --chown=appuser:appuser portia_agent/ ./portia_agent/
 
 # Set the PATH to include the virtual environment's binaries.
 ENV PATH="/opt/venv/bin:$PATH"
