@@ -1,17 +1,5 @@
 import os
 import pickle
-import json
-
-# --- PATH CORRECTION ---
-# This is the crucial fix. It tells Python to add the project's root directory
-# to the list of paths it searches for modules, resolving the ModuleNotFoundError.
-import sys
-# This resolves the absolute path to the project's root directory.
-# It goes up one level from 'backend' (`/home/appuser/app/backend`) to `/home/appuser/app`.
-project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(project_root)
-# --- END PATH CORRECTION ---
-
 from fastapi import FastAPI, Depends, HTTPException, status
 from pydantic import BaseModel
 from dotenv import load_dotenv
@@ -19,14 +7,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
-# Local imports
+# Local imports will now work correctly after renaming the folder to `portia_agent`
 from portia_agent.agent import PortiaAIAgent
 from portia import ActionClarification, InputClarification, MultipleChoiceClarification, PlanRunState, PlanRun
 from backend.redis_client import get_redis_client
 from backend.database import get_db, Base, engine
 from backend.models import User
 from backend.auth import create_access_token, get_password_hash, verify_password, get_current_user
-from backend.plan_registrar import register_all_plans
+# from backend.plan_registrar import register_all_plans # Uncomment if using pre-defined plans
 
 # --- Database Setup ---
 Base.metadata.create_all(bind=engine)
@@ -40,7 +28,6 @@ allowed_origins = [
     "http://localhost:8501",
     "http://localhost",
 ]
-# Add the production frontend URL from an environment variable for security
 PRODUCTION_FRONTEND_URL = os.getenv("FRONTEND_URL")
 if PRODUCTION_FRONTEND_URL:
     allowed_origins.append(PRODUCTION_FRONTEND_URL)
@@ -157,11 +144,11 @@ def resume_flow(request: ChatRequest, current_user: User = Depends(get_current_u
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# --- STARTUP EVENT (for plan registration) ---
+# --- STARTUP EVENT (for pre-defined plans, if you choose that route) ---
 @app.on_event("startup")
 async def startup_event():
     """This function runs once when the application starts."""
-    # Note: If you choose the dynamic plan generation route, you can comment this out.
-    # If you prefer pre-defined plans, ensure backend/plan_registrar.py exists and is correct.
+    # If you create a `backend/plan_registrar.py`, you can uncomment this line
+    # to have your application automatically register its core workflows on startup.
     # register_all_plans(agent.portia_client)
-    print("Application startup complete. Plan registration logic can be placed here.")
+    print("Application startup complete.")
