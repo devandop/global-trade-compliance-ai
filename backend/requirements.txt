@@ -3,7 +3,7 @@ uvicorn[standard]
 python-dotenv
 google-generativeai
 pydantic
-portia-sdk-python
+portia-sdk-python[google]
 redis
 passlib[bcrypt]
 python-jose[cryptography]
