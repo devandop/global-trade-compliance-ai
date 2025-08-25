@@ -1,5 +1,5 @@
 # --- Stage 1: Build Stage ---
-# CORRECTED: Use Python 3.11 as the base image to meet Portia SDK requirements.
+# CORRECTED: Use Python 3.12 as the base image to meet Portia SDK requirements.
 FROM python:3.11-bullseye AS builder
 
 # Set environment variables for non-interactive installs and Python best practices.
@@ -33,8 +33,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 
 # --- Stage 2: Final Production Image ---
-# CORRECTED: Use the corresponding slim version of Python 3.11 for the final image.
-FROM python:3.11-slim-bullseye AS final
+# CORRECTED: Use the corresponding slim version of Python 3.12 for the final image.
+FROM python:3.12-slim-bullseye AS final
 
 # Set the same non-interactive env var.
 ENV DEBIAN_FRONTEND=noninteractive
