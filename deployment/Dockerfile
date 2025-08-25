@@ -1,69 +1,74 @@
 # --- Stage 1: Build Stage ---
-# Use a specific, stable Python version as the base
-FROM python:3.9-slim-buster AS builder
+# Use a modern, stable Debian base image ("Bullseye") for better package repository reliability.
+FROM python:3.9-bullseye AS builder
 
-# Set environment variables for non-interactive installs
-ENV PYTHONUNBUFFERED=1 \
+# Set environment variables to ensure apt-get runs non-interactively and for Python best practices.
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1
 
-# Set an environment variable for the Node.js version for easy updates
-ENV NODE_VERSION 18.17.1
-
-# This is the official SHA256 checksum for node-v18.17.1-linux-x64.tar.xz
-# Source: https://nodejs.org/dist/v18.17.1/SHASUMS256.txt
-ENV NODE_SHA256 59413a6c93223f5397063625405459f0f62b8001d8b746d5c560f772b38c20c1
-
-# Install necessary dependencies for building and downloading
+# The canonical, robust way to install system packages in a single layer.
+# This updates, installs, and cleans up in one atomic operation.
+# We install 'build-essential' here in the builder stage in case any Python
+# packages need to compile C extensions.
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends curl tar xz-utils && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y --no-install-recommends \
+    nodejs \
+    npm \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
-# Download the official Node.js binary, verify its checksum, and install it
-RUN curl -fsSL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz" -o nodejs.tar.xz && \
-    # --- Checksum Verification Step ---
-    echo "${NODE_SHA256}  nodejs.tar.xz" | sha256sum -c - && \
-    # --- End Verification ---
-    tar -xJf nodejs.tar.xz -C /usr/local --strip-components=1 && \
-    rm nodejs.tar.xz && \
-    ln -s /usr/local/bin/node /usr/local/bin/nodejs
-
-# Verify the installation
+# Verify Node.js installation as a sanity check
 RUN node -v && npm -v
+
+# Create a virtual environment for Python packages for proper isolation.
+# /opt/ is a standard location for optional software.
+RUN python -m venv /opt/venv
+# Activate the virtual environment for subsequent RUN commands
+ENV PATH="/opt/venv/bin:$PATH"
 
 # Set the working directory
 WORKDIR /app
 
-# Install Python dependencies into a virtual environment for isolation
-RUN python -m venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
-
-# Copy requirements file and install dependencies
+# Install Python dependencies
+# Copy only the requirements file first to leverage Docker's build cache.
 COPY backend/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 
-# --- Stage 2: Final Production Stage ---
-# Use a fresh, clean base image for the final product
-FROM python:3.9-slim-buster AS final
+# --- Stage 2: Final Production Image ---
+# Start the final stage from a fresh, clean SLIM base image for a smaller size.
+FROM python:3.9-slim-bullseye AS final
 
-# Create a non-root user for better security
+# Set the same non-interactive env var
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install only the necessary RUNTIME system dependencies.
+# We need nodejs for the Portia SDK to run the Xero MCP server.
+# We do NOT need build-essential, curl, etc., keeping the image slim and secure.
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create a dedicated, non-root user for running the application for security.
 RUN useradd --create-home appuser
 WORKDIR /home/appuser/app
 USER appuser
 
-# Copy the virtual environment from the build stage
+# Copy the pre-built virtual environment from the builder stage.
 COPY --from=builder /opt/venv /opt/venv
 
-# Copy the application code from the current build context
+# Copy the application source code, setting ownership to the non-root user.
 COPY --chown=appuser:appuser backend/ ./backend/
 COPY --chown=appuser:appuser portia-agent/ ./portia-agent/
 
-# Set the PATH to include the virtual environment's binaries
+# Set the PATH to include the virtual environment's binaries for the final image.
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Expose the port the app will run on
+# Expose the port the application will listen on.
 EXPOSE 8000
 
-# The command to run the application in production
-# We do not use --reload in production
+# The command to run the application in production.
+# The --reload flag is NOT used in production.
 CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
