@@ -1,0 +1,63 @@
+# Render Blueprint (Infrastructure as Code)
+# Defines all the services needed for the Global Trade Compliance AI application.
+
+services:
+  # 1. The PostgreSQL Database
+  - type: psql
+    name: compliance-db
+    plan: free # Use a paid plan for production apps with significant data
+    # Render will automatically handle versioning and backups.
+
+  # 2. The Redis Cache & State Store
+  - type: redis
+    name: compliance-redis
+    plan: free # Use a paid plan for production apps with significant state
+
+  # 3. The FastAPI Backend Service
+  - type: web
+    name: compliance-ai-backend
+    runtime: docker
+    dockerfilePath: ./deployment/Dockerfile # Path from the repo root
+    plan: starter # Choose an appropriate plan based on RAM needs (4GB WSL means Starter is a good start)
+    healthCheckPath: /health # Add a health check endpoint to your FastAPI for Render
+    envVars:
+      # --- Connection Strings (automatically injected by Render) ---
+      - key: DATABASE_URL
+        fromDatabase:
+          name: compliance-db
+          property: connectionString
+      - key: REDIS_URL
+        fromRedis:
+          name: compliance-redis
+          property: connectionString
+      
+      # --- Secrets (values are set in the Render Dashboard) ---
+      - key: PORTIA_API_KEY
+        sync: false
+      - key: GOOGLE_API_KEY
+        sync: false
+      - key: XERO_CLIENT_ID
+        sync: false
+      - key: XERO_CLIENT_SECRET
+        sync: false
+      - key: SECRET_KEY # For JWT
+        sync: false
+      - key: TAVILY_API_KEY
+        sync: false
+      - key: FRONTEND_URL # The URL of the deployed Streamlit app
+        sync: false
+
+  # 4. The Streamlit Frontend Service
+  - type: web
+    name: compliance-ai-frontend
+    runtime: python
+    buildCommand: "pip install -r frontend/requirements.txt"
+    startCommand: "streamlit run frontend/app.py --server.port $PORT --server.enableCORS false"
+    plan: starter
+    envVars:
+      # --- Connection String (automatically injected by Render) ---
+      - key: BACKEND_URL
+        fromService:
+          type: web
+          name: compliance-ai-backend
+          property: url # This automatically gets the URL of the backend service
