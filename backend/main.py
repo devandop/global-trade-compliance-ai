@@ -1,6 +1,15 @@
 # backend/main.py
+
 import os
+# --- PATH CORRECTION ---
+# This code tells Python to add the project's root directory
+# to the list of paths it searches for modules.
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# --- END PATH CORRECTION ---
+
 import pickle
+import json
 from fastapi import FastAPI, Depends, HTTPException, status
 from pydantic import BaseModel
 from dotenv import load_dotenv
