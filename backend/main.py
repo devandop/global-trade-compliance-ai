@@ -1,15 +1,17 @@
-# backend/main.py
-
 import os
-# --- PATH CORRECTION ---
-# This code tells Python to add the project's root directory
-# to the list of paths it searches for modules.
-import sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-# --- END PATH CORRECTION ---
-
 import pickle
 import json
+
+# --- PATH CORRECTION ---
+# This is the crucial fix. It tells Python to add the project's root directory
+# to the list of paths it searches for modules, resolving the ModuleNotFoundError.
+import sys
+# This resolves the absolute path to the project's root directory.
+# It goes up one level from 'backend' (`/home/appuser/app/backend`) to `/home/appuser/app`.
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(project_root)
+# --- END PATH CORRECTION ---
+
 from fastapi import FastAPI, Depends, HTTPException, status
 from pydantic import BaseModel
 from dotenv import load_dotenv
@@ -24,6 +26,7 @@ from backend.redis_client import get_redis_client
 from backend.database import get_db, Base, engine
 from backend.models import User
 from backend.auth import create_access_token, get_password_hash, verify_password, get_current_user
+from backend.plan_registrar import register_all_plans
 
 # --- Database Setup ---
 Base.metadata.create_all(bind=engine)
@@ -37,6 +40,7 @@ allowed_origins = [
     "http://localhost:8501",
     "http://localhost",
 ]
+# Add the production frontend URL from an environment variable for security
 PRODUCTION_FRONTEND_URL = os.getenv("FRONTEND_URL")
 if PRODUCTION_FRONTEND_URL:
     allowed_origins.append(PRODUCTION_FRONTEND_URL)
@@ -44,7 +48,6 @@ if PRODUCTION_FRONTEND_URL:
 app.add_middleware(CORSMiddleware, allow_origins=allowed_origins, allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
 # --- Client Initializations ---
-# Pass the GOOGLE_API_KEY for the pre-processing LLM
 agent = PortiaAIAgent(
     portia_api_key=os.getenv("PORTIA_API_KEY"),
     google_api_key=os.getenv("GOOGLE_API_KEY"),
@@ -99,20 +102,14 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
 def chat(request: ChatRequest, current_user: User = Depends(get_current_user)):
     end_user_id = str(current_user.id)
     
-    # --- NEW PRE-PROCESSING STEP ---
     processed_query = agent.pre_process_query(request.user_message, request.session_id)
     
     if processed_query.get("status") == "clarification_needed":
-        return {
-            "response_type": "clarification_input",
-            "message": processed_query.get("clarification_question")
-        }
+        return {"response_type": "clarification_input", "message": processed_query.get("clarification_question")}
     
     if processed_query.get("status") == "error":
         raise HTTPException(status_code=500, detail="Failed to pre-process query.")
-    # --- END PRE-PROCESSING STEP ---
 
-    # If the query is ready, use the enriched version to start the task
     enriched_query = processed_query.get("enriched_query")
     try:
         plan_run = agent.start_new_task(enriched_query, end_user_id)
@@ -138,22 +135,14 @@ def resume_flow(request: ChatRequest, current_user: User = Depends(get_current_u
         raise HTTPException(status_code=404, detail="No active plan found for this session.")
     
     try:
-        # First, try to resolve any outstanding text-based clarifications
-        # This handles the case where a user is replying to a question
-        needs_resume = True
-        if plan_run.state == PlanRunState.NEED_CLARIFICATION:
+        while plan_run.state == PlanRunState.NEED_CLARIFICATION:
             clarification = plan_run.get_outstanding_clarifications()[0]
-            if isinstance(clarification, InputClarification) or isinstance(clarification, MultipleChoiceClarification):
-                plan_run = portia_sdk.resolve_clarification(clarification, request.user_message, plan_run)
-                # After resolving, we will still call resume
-            elif isinstance(clarification, ActionClarification):
+            if isinstance(clarification, ActionClarification):
                 plan_run = portia_sdk.wait_for_ready(plan_run)
-                # After waiting, we might not need to resume if it's DONE
-                if plan_run.state == PlanRunState.DONE:
-                    needs_resume = False
-        
-        # If the plan is not done, resume it
-        if needs_resume and plan_run.state != PlanRunState.DONE:
+            else:
+                plan_run = portia_sdk.resolve_clarification(clarification, request.user_message, plan_run)
+            
+        if plan_run.state != PlanRunState.DONE:
             plan_run = portia_sdk.resume(plan_run)
 
         store_plan_run(request.session_id, plan_run)
@@ -168,7 +157,11 @@ def resume_flow(request: ChatRequest, current_user: User = Depends(get_current_u
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# Note: The startup event for plan registration is removed as the new
-#       design dynamically generates plans with `portia.plan()`.
-#       If you want to keep pre-defined plans, you can add the startup event back
-#       and modify the agent to use those plan IDs instead of dynamic generation.
+# --- STARTUP EVENT (for plan registration) ---
+@app.on_event("startup")
+async def startup_event():
+    """This function runs once when the application starts."""
+    # Note: If you choose the dynamic plan generation route, you can comment this out.
+    # If you prefer pre-defined plans, ensure backend/plan_registrar.py exists and is correct.
+    # register_all_plans(agent.portia_client)
+    print("Application startup complete. Plan registration logic can be placed here.")
