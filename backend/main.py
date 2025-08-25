@@ -1,6 +1,5 @@
 import os
 import pickle
-import json
 from fastapi import FastAPI, Depends, HTTPException, status
 from pydantic import BaseModel
 from dotenv import load_dotenv
@@ -8,24 +7,37 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
+# Local imports
 from portia_agent.agent import PortiaAIAgent
 from portia import ActionClarification, InputClarification, MultipleChoiceClarification, PlanRunState, PlanRun
-
 from backend.redis_client import get_redis_client
 from backend.database import get_db, Base, engine
 from backend.models import User
 from backend.auth import create_access_token, get_password_hash, verify_password, get_current_user
+# Import the plan registrar
+from backend.plan_registrar import register_all_plans
 
+# --- Database Setup ---
 Base.metadata.create_all(bind=engine)
+
+# --- App Initialization ---
 load_dotenv()
 app = FastAPI(title="Global Trade Compliance AI Backend")
 
+# --- SECURE CORS CONFIGURATION FOR PRODUCTION ---
 allowed_origins = [
     "http://localhost:8501",
     "http://localhost",
 ]
+# Add the production frontend URL from an environment variable for security
+PRODUCTION_FRONTEND_URL = os.getenv("FRONTEND_URL")
+if PRODUCTION_FRONTEND_URL:
+    allowed_origins.append(PRODUCTION_FRONTEND_URL)
+
 app.add_middleware(CORSMiddleware, allow_origins=allowed_origins, allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
+# --- Client Initializations ---
+# Note: google_api_key is not needed here as Portia's plan() method handles the LLM interaction.
 agent = PortiaAIAgent(
     portia_api_key=os.getenv("PORTIA_API_KEY"),
     xero_client_id=os.getenv("XERO_CLIENT_ID"),
@@ -34,7 +46,12 @@ agent = PortiaAIAgent(
 redis = get_redis_client()
 portia_sdk = agent.portia_client.get_sdk()
 
-# --- Models ---
+# --- HEALTH CHECK ENDPOINT (for Render) ---
+@app.get("/health", status_code=status.HTTP_200_OK)
+def health_check():
+    return {"status": "ok", "message": "Backend is healthy"}
+
+# --- Models and Helper Functions ---
 class ChatRequest(BaseModel):
     user_message: str
     session_id: str
@@ -42,14 +59,13 @@ class UserCreate(BaseModel):
     username: str
     password: str
 
-# --- Helper Functions for State Management ---
 def store_plan_run(session_id: str, plan_run: PlanRun):
     redis.set(f"plan_run:{session_id}", pickle.dumps(plan_run), ex=3600)
 def get_plan_run(session_id: str) -> PlanRun:
     data = redis.get(f"plan_run:{session_id}")
     return pickle.loads(data) if data else None
 
-# --- Auth Endpoints ---
+# --- Authentication Endpoints ---
 @app.post("/signup")
 def signup(user: UserCreate, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.username == user.username).first()
@@ -119,3 +135,9 @@ def resume_flow(request: ChatRequest, current_user: User = Depends(get_current_u
             return {"response_type": "pending", "message": "Task is still in progress..."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+# --- STARTUP EVENT (for plan registration) ---
+@app.on_event("startup")
+async def startup_event():
+    """This function runs once when the application starts."""
+    register_all_plans(agent.portia_client)
